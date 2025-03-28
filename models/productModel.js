@@ -5,7 +5,7 @@ exports.getAllProducts = (callback) => {
   db.query(sql, (err, result) => {
     callback(err, result);
   });
-};
+}; 
 
 exports.getProductById = (id, callback) => {
   const sql = "SELECT * FROM products WHERE id = ?";
