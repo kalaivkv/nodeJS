@@ -3,6 +3,7 @@ const mysql = require("mysql");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -42,8 +43,7 @@ app.post("/api/register", (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  const sql =
-    "INSERT INTO users (name, email, gender, dob, state) VALUES (?, ?, ?, ?, ?)";
+  const sql = "INSERT INTO users (name, email, gender, dob, state) VALUES (?, ?, ?, ?, ?)";
   db.query(sql, [name, email, gender, dob, state], (err, result) => {
     if (err) {
       console.error("Database Error:", err);
@@ -57,6 +57,18 @@ app.post("/api/register", (req, res) => {
     res.status(201).json({ message: "User registered successfully" });
   });
 });
+
+app.get("/api/users", (req, res) => {
+  const sql = "SELECT id, name, email, gender, DATE_FORMAT(dob, '%Y-%m-%d') AS dob, state FROM users";
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Database fetch error:", err);
+      return res.status(500).json({ error: "Failed to fetch users" });
+    }
+    res.json(results);
+  });
+});
+
 
 const PORT = 5000;
 server.listen(PORT, () =>
